@@ -1,0 +1,30 @@
+DROP TRIGGER trig_kontrola_znamenka;
+DROP TRIGGER DROP TRIGGER;
+
+DROP TABLE tbl_deal;
+DROP TABLE tbl_order;
+DROP TABLE tbl_portfolio;
+DROP TABLE tbl_product;
+DROP TABLE tbl_product_type;
+DROP TABLE tbl_deal_type;
+
+DROP SEQUENCE seq_deal;
+DROP SEQUENCE seq_order;
+DROP SEQUENCE seq_portfolio;
+DROP SEQUENCE seq_product;
+
+DROP TABLE OBJ_order;
+DROP TABLE OBJ_portfolio;
+DROP TABLE OBJ_product_type;
+DROP TABLE OBJ_product;
+DROP TABLE OBJ_deal_type;
+DROP TABLE OBJ_deal;
+
+DROP TYPE t_order;
+DROP TYPE t_portfolio;
+DROP TYPE  t_product_type;
+DROP TYPE  t_product;
+DROP TYPE  t_deal_type;
+DROP TYPE  t_deal;
+
+DROP TABLE tbl_stav_aktualni;

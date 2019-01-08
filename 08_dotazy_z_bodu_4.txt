@@ -1,0 +1,78 @@
+SET AUTOTRACE ON;
+
+--Seznam stavu portfolií (tj. aktuálních kusù cenných papírù) na jednotlivých portfoliích
+
+select b.id, b.prijmeni, c.nazev, sum(a.pocet_kusu) as pocet_kusu
+from tbl_deal a
+join tbl_portfolio b on a.id_portfolio=b.id
+join tbl_product c on a.id_product=c.id
+join tbl_order d on a.id_order=d.id
+where d.dt_prikazu<=sysdate
+group by b.id, b.prijmeni, c.nazev
+order by b.id, b.prijmeni, c.nazev
+;
+
+--Seznam obchodù pana Nováka za leden 2018
+	--verze 1
+	select b.dt_prikazu, a.id_order, c.nazev, a.pocet_kusu
+	from tbl_deal a
+	join tbl_order b on a.id_order=b.id
+	join tbl_product c on a.id_product=c.id
+	join tbl_portfolio d on a.id_portfolio=d.id
+	where d.prijmeni like '%Novák%'
+		and b.dt_prikazu <= to_date('2018-01-31', 'yyyy-mm-dd')
+		and b.dt_prikazu >= to_date('2018-01-01', 'yyyy-mm-dd')
+	order by b.dt_prikazu, a.id_order, c.nazev
+	;
+	--verze 2
+	select b.dt_prikazu, a.id_order, c.nazev, a.pocet_kusu
+	from tbl_deal a
+	join tbl_order b on a.id_order=b.id
+	join tbl_product c on a.id_product=c.id
+	where a.id_portfolio in (select id from tbl_portfolio where prijmeni like '%Novák%')
+		and a.id_order in 
+			(select id from tbl_order 
+			where dt_prikazu <= to_date('2018-01-31', 'yyyy-mm-dd')
+			and b.dt_prikazu >= to_date('2018-01-01', 'yyyy-mm-dd')
+			)
+	order by b.dt_prikazu, a.id_order, c.nazev
+	;
+
+--jmenovitý seznam akcií, které byly nakoupené nìkým, kdo bydlí v Brne.
+	--verze 1
+	select distinct c.nazev
+	from tbl_deal a
+	join tbl_portfolio b on a.id_portfolio=b.id
+	join tbl_product c on a.id_product=c.id
+	where b.mesto like '%Brno%'
+	order by c.nazev
+	;
+	--verze 2
+	select distinct c.nazev
+	from tbl_deal a
+	join tbl_product c on a.id_product=c.id
+	where a.id_portfolio in (select id from tbl_portfolio where mesto like '%Brno%')
+	order by c.nazev
+	;
+
+--Porovnání prùmìrné nákupní ceny akcií UNICREDIT u pana Nováka a ostatních portfolií.
+
+select b.prijmeni, sum(a.cena_celkova)/sum(a.pocet_kusu) as cena_prumerna
+from tbl_deal a
+join tbl_portfolio b on a.id_portfolio=b.id
+where a.id_product=253 		--akcie UNICREDIT
+group by b.prijmeni
+order by b.prijmeni
+;
+
+--Seznam dluhopisù vydaných v roce 2018, které máme v systému.
+
+select nazev 
+from tbl_product
+where dt_issue <= to_date('2018-12-31', 'yyyy-mm-dd')
+	and dt_issue > to_date('2018-01-01', 'yyyy-mm-dd')
+	and id_type=2
+order by nazev
+;
+
+SET AUTOTRACE OFF;

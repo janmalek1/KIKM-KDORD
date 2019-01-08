@@ -1,0 +1,30 @@
+﻿--1)
+--použití procedury zaloz_produkt
+BEGIN
+  investicni_procesy_api.zaloz_produkt
+  (2,'FIKTIVNI BOND',to_date('2018-11-26', 'yyyy-mm-dd'),to_date('2030-11-26', 'yyyy-mm-dd'));
+END;
+/
+--TEST, že procedura zaloz_produkt zapsala smysluplný záznam
+select * 
+from tbl_product
+where id = (select max(id) from tbl_product)
+/
+--2)
+--použití procedury zadej_obchod
+BEGIN
+  investicni_procesy_api.zadej_obchod (3,10,1,sysdate,20,200,10);
+END;
+/
+--TEST, že procedura zadej_obchod zapsala smysluplné záznamy
+select * 
+from tbl_order
+where id = (select max(id) from tbl_order)
+;
+/
+select * 
+from tbl_deal
+where id_order = (select max(id_order) from tbl_deal)
+/
+
+

@@ -1,0 +1,96 @@
+-- TABLES
+
+CREATE TABLE tbl_order
+(
+	id      	NUMBER(38) NOT NULL,
+	dt_prikazu		DATE NOT NULL,
+	CONSTRAINT PK_order PRIMARY KEY (id)
+)
+;
+
+
+CREATE TABLE tbl_portfolio
+(
+	id  		NUMBER(38) NOT NULL,
+	jmeno		VARCHAR(50) NOT NULL,
+	prijmeni		VARCHAR(50) NOT NULL,
+	ulice		VARCHAR(50) NULL,
+	mesto		VARCHAR(50) NULL,
+	CONSTRAINT PK_portfolio PRIMARY KEY (id)
+)
+;
+
+CREATE TABLE tbl_product_type
+(
+	id  		NUMBER(38) NOT NULL,
+	nazev		VARCHAR(50) NOT NULL,
+	CONSTRAINT PK_product_type PRIMARY KEY (id)
+)
+;
+
+CREATE TABLE tbl_product
+(
+	id  		NUMBER(38) NOT NULL,
+	id_type		NUMBER(38) NOT NULL,
+	nazev		VARCHAR(50) NOT NULL,
+	dt_issue   		DATE NULL,
+	dt_maturity    	DATE NULL,
+	CONSTRAINT PK_product PRIMARY KEY (id),
+	CONSTRAINT FK_product_type FOREIGN KEY (id_type) REFERENCES tbl_product_type (id)
+)
+;
+
+CREATE TABLE tbl_deal_type
+(
+	id  		NUMBER(38) NOT NULL,
+	nazev		VARCHAR(50) NOT NULL,
+	CONSTRAINT PK_deal_type PRIMARY KEY (id)
+)
+;
+
+CREATE TABLE tbl_deal
+(
+	id      	NUMBER(38) NOT NULL,
+	id_order  	NUMBER(38) NOT NULL,
+	id_portfolio  	NUMBER(38) NOT NULL,
+	id_product  	NUMBER(38) NOT NULL,
+	id_type			NUMBER(38) NOT NULL,
+	cena_jednotkova	NUMBER(38) NOT NULL,
+	cena_celkova	NUMBER(38) NOT NULL,
+	pocet_kusu	NUMBER(38) NOT NULL,
+	CONSTRAINT PK_deal PRIMARY KEY (id),
+	CONSTRAINT FK_order FOREIGN KEY (id_order) REFERENCES tbl_order (id),
+	CONSTRAINT FK_dealtype FOREIGN KEY (id_type) REFERENCES tbl_deal_type (id),
+	CONSTRAINT FK_portfolio FOREIGN KEY (id_portfolio) REFERENCES tbl_portfolio (id),
+	CONSTRAINT FK_product FOREIGN KEY (id_product) REFERENCES tbl_product (id),
+	CONSTRAINT check_cena_jednotkova CHECK (cena_jednotkova  <> 0 ),
+	CONSTRAINT check_pocet_kusu CHECK (pocet_kusu <> 0),
+	CONSTRAINT check_celkova_cena CHECK (abs(cena_celkova-(cena_jednotkova*pocet_kusu))<0.0001)
+)
+;
+
+-- SEQUENCE
+
+CREATE SEQUENCE seq_deal
+  START WITH 1
+  INCREMENT BY 1
+  NOCACHE
+  NOCYCLE;
+
+CREATE SEQUENCE seq_order
+  START WITH 1
+  INCREMENT BY 1
+  NOCACHE
+  NOCYCLE;
+
+CREATE SEQUENCE seq_portfolio
+  START WITH 1
+  INCREMENT BY 1
+  NOCACHE
+  NOCYCLE;
+
+CREATE SEQUENCE seq_product
+  START WITH 1
+  INCREMENT BY 1
+  NOCACHE
+  NOCYCLE;

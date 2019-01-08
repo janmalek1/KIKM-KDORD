@@ -1,0 +1,62 @@
+Error starting at line 6 in command:
+INSERT INTO tbl_product (id, id_type, nazev, dt_issue,dt_maturity) VALUES 	(seq_product.nextval,1,	NULL ,null,null)
+Error report:
+SQL Error: ORA-01400: do ("DOMALEKJA1"."TBL_PRODUCT"."NAZEV") nelze vložit hodnotu NULL
+01400. 00000 -  "cannot insert NULL into (%s)"
+*Cause:    
+*Action:
+
+Error starting at line 11 in command:
+INSERT INTO tbl_product (id, id_type, nazev, dt_issue,dt_maturity) VALUES 	(seq_product.nextval,10,'VYMYŠLENÝ CENNÝ PAPÍR',null,null)
+Error report:
+SQL Error: ORA-02291: integritní omezení (DOMALEKJA1.FK_PRODUCT_TYPE) porušeno - nenalezen nadøízený klíè
+02291. 00000 - "integrity constraint (%s.%s) violated - parent key not found"
+*Cause:    A foreign key value has no matching primary key value.
+*Action:   Delete the foreign key or add a matching primary key.
+Error starting at line 17 in command:
+INSERT INTO tbl_deal (id,id_order,id_portfolio,id_product,id_type,cena_jednotkova,cena_celkova,pocet_kusu) VALUES (seq_deal.nextval,10,2,253,3,0,0,1000)
+Error report:
+SQL Error: ORA-02290: kontrolní omezení (DOMALEKJA1.CHECK_CENA_JEDNOTKOVA) porušeno
+02290. 00000 -  "check constraint (%s.%s) violated"
+*Cause:    The values being inserted do not satisfy the named check
+           
+*Action:   do not insert values that violate the constraint.
+
+Error starting at line 19 in command:
+INSERT INTO tbl_deal (id,id_order,id_portfolio,id_product,id_type,cena_jednotkova,cena_celkova,pocet_kusu) VALUES (seq_deal.nextval,10,2,253,3,20,0,0)
+Error report:
+SQL Error: ORA-02290: kontrolní omezení (DOMALEKJA1.CHECK_POCET_KUSU) porušeno
+02290. 00000 -  "check constraint (%s.%s) violated"
+*Cause:    The values being inserted do not satisfy the named check
+           
+*Action:   do not insert values that violate the constraint.
+
+Error starting at line 21 in command:
+INSERT INTO tbl_deal (id,id_order,id_portfolio,id_product,id_type,cena_jednotkova,cena_celkova,pocet_kusu) VALUES (seq_deal.nextval,10,2,253,3,21,20000,1000)
+Error report:
+SQL Error: ORA-02290: kontrolní omezení (DOMALEKJA1.CHECK_CELKOVA_CENA) porušeno
+02290. 00000 -  "check constraint (%s.%s) violated"
+*Cause:    The values being inserted do not satisfy the named check
+           
+*Action:   do not insert values that violate the constraint.
+Error starting at line 27 in command:
+INSERT INTO tbl_deal (id,id_order,id_portfolio,id_product,id_type,cena_jednotkova,cena_celkova,pocet_kusu) VALUES 	(seq_deal.nextval,10,1,253,3,20,-100,-5)
+Error report:
+SQL Error: ORA-21000: argument s èíslem chyby urèený k raise_application_error z -10000 je mimo rozsah
+ORA-06512: na "DOMALEKJA1.TRIG_KONTROLA_ZNAMENKA", line 8
+ORA-04088: chyba bìhem provádìní triggeru 'DOMALEKJA1.TRIG_KONTROLA_ZNAMENKA'
+21000. 00000 -  "error number argument to raise_application_error of %s%s is out of range"
+*Cause:    
+*Action:   Use an error number in the range of -20000 to -20999, inclusive.
+
+Error starting at line 31 in command:
+INSERT INTO TBL_DEAL (ID,ID_ORDER,ID_PORTFOLIO,ID_PRODUCT,ID_TYPE,CENA_JEDNOTKOVA,CENA_CELKOVA,POCET_KUSU) VALUES 	(SEQ_DEAL.NEXTVAL,10,1,253,3,20,20000,1000)
+Error report:
+SQL Error: ORA-20000: Prekroceno 100 povolenych kusu UNICREDIT na portfoliu pana Novaka
+ORA-06512: na "DOMALEKJA1.TRIG_KONTROLA_UNICREDIT", line 12
+ORA-04088: chyba bìhem provádìní triggeru 'DOMALEKJA1.TRIG_KONTROLA_UNICREDIT'
+20000. 00000 -  "%s"
+*Cause:    The stored procedure 'raise_application_error'
+           was called which causes this error to be generated.
+*Action:   Correct the problem as described in the error message or contact
+           the application administrator or DBA for more information.

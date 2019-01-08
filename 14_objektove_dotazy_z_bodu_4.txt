@@ -1,0 +1,46 @@
+--SET AUTOTRACE ON;
+
+--Seznam stavu portfolií (tj. aktuálních kusù cenných papírù) na jednotlivých portfoliích
+
+select a.portfolio.id, a.portfolio.prijmeni, a.product.nazev, sum(a.pocet_kusu) as pocet_kusu
+from OBJ_deal a
+where a.oorder.dt_prikazu<=sysdate
+group by a.portfolio.id, a.portfolio.prijmeni, a.product.nazev
+;
+
+--Seznam obchodù pana Nováka za leden 2018
+
+select a.oorder.dt_prikazu, a.product.nazev, a.pocet_kusu
+from OBJ_deal a
+where a.portfolio.id=1 --pan Novak
+	and a.oorder.dt_prikazu <= to_date('2018-01-31', 'yyyy-mm-dd')
+	and a.oorder.dt_prikazu >= to_date('2018-01-01', 'yyyy-mm-dd')
+;
+
+--jmenovitý seznam akcií, které byly nakoupené nìkým, kdo bydlí v Brnì.
+
+select distinct a.product.nazev
+from OBJ_deal a
+where a.portfolio.mesto like '%Brno%'
+;
+
+--Porovnání prùmìrné nákupní ceny akcií UNICREDIT u pana Nováka a paní Svobodové.
+
+select a.portfolio.prijmeni, sum(a.cena_celkova)/sum(a.pocet_kusu) as cena_prumerna
+from OBJ_deal a
+where a.product.id=253 		--akcie UNICREDIT
+--	and a.portfolio.id in (1,3)	--Novak,Svobodova
+group by a.portfolio.prijmeni
+;
+
+--Seznam dluhopisù vydaných v roce 2018, které máme v systému.
+
+select a.nazev 
+from OBJ_product a
+where a.dt_issue <= to_date('2018-12-31', 'yyyy-mm-dd')
+	and a.dt_issue > to_date('2018-01-01', 'yyyy-mm-dd')
+	and a.product_type.id=2
+;
+
+--SET AUTOTRACE OFF;
+

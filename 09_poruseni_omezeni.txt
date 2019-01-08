@@ -1,0 +1,32 @@
+--Priklad porušení triviálních omezení
+
+	--Tabulka tbl_product: Atributy id_type, nazev musí být vyplnìné
+	-->nevyplníme jméno akcie
+	
+	INSERT INTO tbl_product (id, id_type, nazev, dt_issue,dt_maturity) VALUES 	(seq_product.nextval,1,	NULL ,null,null);
+
+	--Tabulka tbl_product: Atribut id_type je cizí klíè referencující atribut id v tabulce tbl_product_type
+	-->použijeme neexistující hodnotu cizího klíce
+	
+	INSERT INTO tbl_product (id, id_type, nazev, dt_issue,dt_maturity) VALUES 	(seq_product.nextval,10,'VYMYŠLENÝ CENNÝ PAPÍR',null,null);	
+	
+	
+--Priklady porušení dodatecných omezení
+
+	--Tabulka tbl_deal: Atribut cena_jednotkova musí byt ruzny od nuly
+	INSERT INTO tbl_deal (id,id_order,id_portfolio,id_product,id_type,cena_jednotkova,cena_celkova,pocet_kusu) VALUES (seq_deal.nextval,10,2,253,3,0,0,1000);				
+	--Tabulka tbl_deal: Atribut pocet_kusu musí byt ruzny od nuly
+	INSERT INTO tbl_deal (id,id_order,id_portfolio,id_product,id_type,cena_jednotkova,cena_celkova,pocet_kusu) VALUES (seq_deal.nextval,10,2,253,3,20,0,0);			
+	--Tabulka tbl_deal: Atribut cena_celkova se musí rovnat soucinu atributu cena_jednotkova a pocet_kusu
+	INSERT INTO tbl_deal (id,id_order,id_portfolio,id_product,id_type,cena_jednotkova,cena_celkova,pocet_kusu) VALUES (seq_deal.nextval,10,2,253,3,21,20000,1000);		
+	
+--Porušení netriviálních omezení
+	
+	--Tabulka tbl_deal: typ obchodu nesedí se znaménkem pro pocet_kusu
+	-->typ prodeje nákup (~3) není konzistentní s zápozným množstvím (~-3)
+	INSERT INTO tbl_deal (id,id_order,id_portfolio,id_product,id_type,cena_jednotkova,cena_celkova,pocet_kusu) VALUES 	(seq_deal.nextval,10,1,253,3,20,-100,-5);			
+	
+	--Tabulka tbl_deal: portfolio pana Nováka presáhne 100 kusu akcií UNICREDIT
+	-->nákup 1000 kusu tuto hranici presahuje
+	INSERT INTO tbl_deal (id,id_order,id_portfolio,id_product,id_type,cena_jednotkova,cena_celkova,pocet_kusu) VALUES 	(seq_deal.nextval,10,1,253,3,20,20000,1000);	
+	

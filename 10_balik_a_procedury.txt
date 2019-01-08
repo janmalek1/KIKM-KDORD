@@ -1,0 +1,36 @@
+﻿CREATE OR REPLACE PACKAGE investicni_procesy_api AS
+   PROCEDURE zaloz_produkt (id_type IN NUMBER, nazev IN VARCHAR, dt_issue IN DATE,
+		dt_maturity IN DATE);
+   PROCEDURE zadej_obchod (id_portfolio IN NUMBER,id_product IN NUMBER,id_type IN NUMBER, 
+		dt_prikazu IN date,cena_jednotkova IN NUMBER,cena_celkova IN NUMBER,pocet_kusu IN NUMBER);
+END investicni_procesy_api;
+
+
+CREATE OR REPLACE PACKAGE BODY investicni_procesy_api AS
+  PROCEDURE zaloz_produkt (id_type IN NUMBER, nazev IN VARCHAR, dt_issue IN DATE,
+		dt_maturity IN DATE) AS
+    BEGIN
+      INSERT INTO tbl_product VALUES (seq_product.nextval,id_type,nazev,dt_issue,dt_maturity);
+  END zaloz_produkt;
+  
+  PROCEDURE zadej_obchod (id_portfolio IN NUMBER,id_product IN NUMBER,id_type IN NUMBER, 
+		dt_prikazu IN date,cena_jednotkova IN NUMBER,cena_celkova IN NUMBER,pocet_kusu IN NUMBER) AS    
+
+	nextIdOrder NUMBER :=seq_order.nextval;
+	BEGIN  
+	
+	  --zapsani do tbl_order
+	  INSERT INTO tbl_order VALUES (nextIdOrder,dt_prikazu);
+	  
+	  --zapsani do tbl_deal
+	  
+		--a)připsání nakoupeného produktu
+		INSERT INTO tbl_deal(id,id_order,id_portfolio,id_product,id_type,cena_jednotkova,cena_celkova,pocet_kusu)
+			VALUES (seq_deal.nextval,nextIdOrder,id_portfolio,id_product,id_type,cena_jednotkova,cena_celkova,pocet_kusu);
+		
+		--b)odečtení odpovídajících peněžních prostředků
+		INSERT INTO tbl_deal(id,id_order,id_portfolio,id_product,id_type,cena_jednotkova,cena_celkova,pocet_kusu)
+			VALUES (seq_deal.nextval,nextIdOrder,id_portfolio,1,CASE WHEN ((-1)*pocet_kusu>0ú THEN 3 ELSE 4 END 3,4), 1,-1*cena_celkova,-1*pocet_kusu);
+	  	  
+  END zadej_obchod;  
+END investicni_procesy_api;

@@ -1,0 +1,15 @@
+anonymous block completed
+        ID    ID_TYPE NAZEV                                              DT_ISSUE DT_MATURITY
+---------- ---------- -------------------------------------------------- -------- -----------
+       407          2 FIKTIVNI BOND                                      26.11.18 26.11.30    
+
+anonymous block completed
+        ID DT_PRIKAZU
+---------- ----------
+        23 26.12.18   
+
+        ID   ID_ORDER ID_PORTFOLIO ID_PRODUCT    ID_TYPE CENA_JEDNOTKOVA CENA_CELKOVA POCET_KUSU
+---------- ---------- ------------ ---------- ---------- --------------- ------------ ----------
+      7845         23            3         10          3              20          200         10 
+      7846         23            3          1          4               1         -200        -10 
+

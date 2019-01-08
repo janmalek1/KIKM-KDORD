@@ -1,0 +1,28 @@
+﻿--Vytvoření tabulky, do které se bude po zadání každého pokynu aktualizovat počet nakoupených cenných papírů pro dané portfolio
+
+CREATE TABLE tbl_stav_aktualni
+(
+	id_portfolio      	NUMBER(38) NOT NULL,
+	id_product			NUMBER(38) NOT NULL,
+	pocet_kusu			NUMBER(38) NOT NULL,
+	dt_update			DATE NOT NULL,
+	CONSTRAINT PK_stav_aktualni PRIMARY KEY (id_portfolio,id_product)
+)
+;
+
+-- při zadání řádku do tabulky tbl_deal (tj. při převodu cenného papíru) se automaticky updatuje nápočet cenných papírů v tomto portfoliu
+CREATE OR REPLACE TRIGGER trig_stav_aktualni
+AFTER insert or update or delete
+ON tbl_deal
+BEGIN
+	--nejprve vymaže všechny záznamy ve stavové tabulce
+	delete from tbl_stav_aktualni;
+	
+	--poté znovu provede nápočty
+	insert into tbl_stav_aktualni (id_portfolio,id_product,pocet_kusu, dt_update)
+	select a.id_portfolio,a.id_product, sum(a.pocet_kusu), sysdate
+	from tbl_deal a
+	join tbl_order b on a.id_order=b.id
+	where b.dt_prikazu<=sysdate
+	group by a.id_portfolio,a.id_product
+END;

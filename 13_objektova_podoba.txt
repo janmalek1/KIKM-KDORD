@@ -1,0 +1,87 @@
+--vytvori typy
+
+CREATE OR REPLACE TYPE t_order AS OBJECT
+(
+	id      	NUMBER(38),
+	dt_prikazu		DATE
+)
+;
+
+CREATE OR REPLACE TYPE t_portfolio AS OBJECT
+(
+	id  		NUMBER(38),
+	jmeno		VARCHAR(50),
+	prijmeni		VARCHAR(50),
+	ulice		VARCHAR(50),
+	mesto		VARCHAR(50)
+)
+;
+
+CREATE OR REPLACE TYPE t_product_type AS OBJECT
+(
+	id  		NUMBER(38),
+	nazev		VARCHAR(50)
+)
+;
+
+CREATE OR REPLACE TYPE t_product AS OBJECT
+(
+	id  		NUMBER(38),
+	product_type REF t_product_type,
+	nazev		VARCHAR(50),
+	dt_issue   		DATE,
+	dt_maturity    	DATE
+)
+;
+
+CREATE OR REPLACE TYPE t_deal_type AS OBJECT
+(
+	id  		NUMBER(38),
+	nazev		VARCHAR(50)
+)
+;
+
+CREATE OR REPLACE TYPE t_deal AS OBJECT
+(
+	id      	NUMBER(38),
+	oorder REF	t_order,
+	portfolio REF t_portfolio,
+	product REF t_product,
+	deal_type REF	t_deal_type,
+	cena_jednotkova	NUMBER(38),
+	cena_celkova	NUMBER(38),
+	pocet_kusu	NUMBER(38)
+)
+;
+
+--vytvori objektove tabulky
+
+CREATE TABLE OBJ_order of t_order;
+CREATE TABLE OBJ_portfolio of t_portfolio;
+CREATE TABLE OBJ_product_type of t_product_type;
+CREATE TABLE OBJ_product of t_product;
+CREATE TABLE OBJ_deal_type of t_deal_type;
+CREATE TABLE OBJ_deal of t_deal;
+
+--naplneni objektovych tabulek
+
+INSERT INTO OBJ_order 
+SELECT * FROM tbl_order;
+INSERT INTO OBJ_portfolio
+SELECT * FROM tbl_portfolio;
+INSERT INTO OBJ_product_type
+SELECT * FROM tbl_product_type;
+INSERT INTO OBJ_product
+SELECT id, (SELECT REF(t) from OBJ_product_type t WHERE t.id=o.id_type), nazev, dt_issue, dt_maturity FROM tbl_product o;
+INSERT INTO OBJ_deal_type
+SELECT * FROM tbl_deal_type;
+INSERT INTO OBJ_deal
+SELECT 
+	id,
+	(SELECT REF(o) from OBJ_order o WHERE d.id_order=o.id),
+	(SELECT REF(o) from OBJ_portfolio o WHERE d.id_portfolio=o.id),
+	(SELECT REF(o) from OBJ_product o WHERE d.id_product=o.id),
+	(SELECT REF(o) from OBJ_deal_type o WHERE d.id_type=o.id),
+	cena_jednotkova, cena_celkova, pocet_kusu
+FROM tbl_deal d
+;

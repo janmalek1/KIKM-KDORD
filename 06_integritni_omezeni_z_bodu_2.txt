@@ -1,0 +1,48 @@
+﻿-- Trivialni integritini omezeni uz byly implementovany pri vytvoreni tabulek
+
+-- Netrivialni integritní omezení
+
+	-- 1) každý typ záznamu v tabulce tbl_deal by je konzistentní s kladnou nebo zápornou hodnotou v poli pocet_kusu
+
+	-- prodej ~ záporné množství, nákup ~ kladné množství
+	-- vklad ~ kladné množství, výběr ~ záporné množství
+	-- poplatek ~ záporné množství
+
+	CREATE TRIGGER trig_kontrola_znamenka
+	BEFORE insert
+	ON tbl_deal
+	FOR EACH ROW
+	BEGIN
+		IF 	((:NEW.id_type=1 and :NEW.pocet_kusu<0) 		--vklad
+			OR (:NEW.id_type=2 and :NEW.pocet_kusu>0)	--vyber
+			OR (:NEW.id_type=3 and :NEW.pocet_kusu<0)	--nakup
+			OR (:NEW.id_type=4 and :NEW.pocet_kusu>0)	--prodej
+			OR (:NEW.id_type=5 and :NEW.pocet_kusu>0))	--poplatek
+			THEN
+		  RAISE_APPLICATION_ERROR(-10000, 'Znaménko počtu kusů neodpovídá typu obchodu');
+		END IF;
+	END;
+
+	--	2) do portfolia pana Nováka smí být koupeno pouze 100 kusů akcií UNICREDIT
+
+	CREATE TRIGGER trig_kontrola_unicredit
+	BEFORE insert
+	ON tbl_deal
+	FOR EACH ROW
+	DECLARE
+	  pocet NUMBER(38);
+	BEGIN
+	  -- momentální počet akcií
+	  select sum(a.pocet_kusu) into pocet 
+	  from tbl_deal a
+	  where a.id_portfolio=1 and a.id_product=253
+	  ;
+
+	  -- vyhození vyjimky
+	  IF(:NEW.id_portfolio=1 and :NEW.id_product=253 and (:NEW.pocet_kusu > (100 - pocet))) THEN
+	    RAISE_APPLICATION_ERROR(-20000, 'Prekroceno 100 povolenych kusu UNICREDIT na portfoliu pana Novaka');
+	  END IF;
+	END;
+
+
+
